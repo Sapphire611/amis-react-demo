@@ -101,32 +101,156 @@ const env = {
 class AMISComponent extends React.Component<any, any> {
   render() {
     return renderAmis(
-      // 这里是 amis 的 Json 配置。
       {
         type: 'page',
+        title: 'From Sapphire611',
+        remark: '看了一晚上,没弄明白怎么拿列表中的id去请求详情,只能先这样了',
+        toolbar: [
+          {
+            type: 'button',
+            actionType: 'dialog',
+            label: '新增',
+            icon: 'fa fa-plus pull-left',
+            primary: true,
+            dialog: {
+              title: '新增',
+              body: {
+                type: 'form',
+                name: 'sample-edit-form',
+                api: {
+                  method: 'post',
+                  url: 'https://demo.steedos.cn/api/v4/project',
+                  headers: {
+                    Authorization:
+                      'Bearer FpGqunHSCxQStcHFn,16cd4425f03d73855ce6c76fdaacdbda1b30846c29fd7e3819df05b6e6cc1304c693dde5511b432660a08a'
+                  }
+                },
+                body: [
+                  {
+                    type: 'input-text',
+                    name: 'name',
+                    label: '项目名称'
+                  },
+                  {
+                    type: 'input-tag',
+                    name: 'project_manager',
+                    label: '项目经理',
+                    placeholder: '请选择标签',
+                    options: ['36fd32a9-c10d-47f8-9f21-ce54389add5b']
+                  },
+                  {
+                    type: 'input-tag',
+                    name: 'project_type',
+                    label: '项目类型',
+                    placeholder: '请选择标签',
+                    options: ['develop']
+                  },
+                  {
+                    type: 'input-tag',
+                    name: 'deadline',
+                    label: '截止日期',
+                    placeholder: '请选择标签',
+                    options: ['2023-01-28T00:00:00.000Z']
+                  },
+                  {
+                    type: 'input-tag',
+                    name: 'status',
+                    label: '项目状态',
+                    placeholder: '请选择标签',
+                    options: ['approving']
+                  },
+                  {
+                    type: 'input-tag',
+                    name: 'account',
+                    label: '客户',
+                    placeholder: '请选择标签',
+                    options: ['FpGqunHSCxQStcHFn_o2sunJ3vuz3uSKN4z']
+                  },
+                  {
+                    type: 'checkbox',
+                    name: 'closed',
+                    label: '已关闭'
+                  },
+                  {
+                    type: 'checkbox',
+                    name: 'internal',
+                    label: '内部项目'
+                  }
+                ]
+              }
+            }
+          }
+        ],
         body: {
-          type: 'form',
-          api: '/api/form',
-          body: [
+          type: 'crud',
+          draggable: true,
+          api: {
+            method: 'post',
+            url: 'https://demo.steedos.cn/graphql',
+            data: {
+              query: `{records:project(skip: 0,top: 50,sort: "created desc"){_id name project_code project_manager status deadline account open_tasks open_issues created owner company_id company_ids locked record_permissions},count:project__count}`
+            },
+            headers: {
+              Authorization:
+                'Bearer FpGqunHSCxQStcHFn,16cd4425f03d73855ce6c76fdaacdbda1b30846c29fd7e3819df05b6e6cc1304c693dde5511b432660a08a'
+            }
+          },
+          columns: [
             {
-              type: 'input-text',
               name: 'name',
-              label: '姓名'
+              label: '名称',
+              type: 'text',
+              toggled: true
             },
             {
-              name: 'email',
-              type: 'input-email',
-              label: '邮箱'
+              name: 'project_code',
+              label: '项目编号',
+              type: 'text',
+              toggled: true
             },
             {
-              name: 'color',
-              type: 'input-color',
-              label: 'color'
+              name: 'project_manager',
+              label: '项目经理',
+              type: 'text',
+              toggled: true,
+              remark: '不知道怎么拿id再次查询space_users'
             },
             {
-              type: 'editor',
-              name: 'editor',
-              label: '编辑器'
+              name: 'status',
+              label: '项目状态',
+              type: 'mapping',
+              toggled: true,
+              map: {
+                working: "<span class='label label-success'>进行中</span>",
+                accepted: "<span class='label label-warning'>已验收</span>",
+                approving: "<span class='label label-info'>立项中</span>",
+                '*' : "<span class='label label-default'>草稿</span>"
+              }
+            },
+            {
+              name: 'deadline',
+              label: '截止日期',
+              type: 'text',
+              toggled: true
+            },
+            {
+              name: 'account',
+              label: '客户',
+              type: 'text',
+              toggled: true,
+              remark: '不知道怎么拿id再次查询account'
+            },
+            {
+              name: 'open_tasks',
+              label: '待完成任务',
+              type: 'text',
+              toggled: true
+            },
+            {
+              name: 'open_issues',
+              label: '待解决问题',
+              type: 'text',
+              toggled: true
             }
           ]
         }
